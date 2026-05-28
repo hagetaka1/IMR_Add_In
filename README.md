@@ -1,88 +1,92 @@
-# OPEX IMR Chart  -  Python / xlwings version
+# OPEX IMR Chart Add-in
 
-## Quick start (2 minutes)
+Individuals and Moving Range (IMR) control charts for Excel, with a dedicated **OPEX** ribbon tab.
 
-### 1  Install dependencies
+---
+
+## Files
+
+| File | Purpose |
+|---|---|
+| `OPEX.xlam` | Excel add-in with OPEX ribbon tab and IMR Chart button |
+| `opex_imr.py` | Python chart engine (xlwings) |
+
+---
+
+## Setup (one time)
+
+### 1  Install Python dependencies
 ```
 pip install xlwings
 ```
 
-### 2  Copy opex_imr.py somewhere permanent
+### 2  Install the xlwings Excel add-in
+```
+xlwings addin install
+```
+This gives Excel the `RunPython` function that the ribbon button uses.
+
+### 3  Place opex_imr.py in a permanent folder
 ```
 C:\AddIns\opex_imr.py
 ```
+(Any folder works — just remember the path for step 5.)
 
-### 3  Run it
-Double-click `opex_imr.py`, or from a terminal:
+### 4  Install OPEX.xlam
+- Right-click `OPEX.xlam` -> Properties -> check **Unblock** -> OK
+- Excel -> File -> Options -> Add-Ins -> Manage: Excel Add-Ins -> Go
+- Browse to `OPEX.xlam` -> OK
+
+You will now see an **OPEX** tab in the Excel ribbon.
+
+### 5  Tell xlwings where opex_imr.py lives
+- Click the **xlwings** ribbon tab
+- Click **Settings** (or **Edit Config**)
+- Set `PYTHONPATH` to the folder containing `opex_imr.py`, e.g.:
+  ```
+  PYTHONPATH = C:\AddIns
+  ```
+- Save and close
+
+---
+
+## Usage
+
+1. Open Excel and enter your data in a single column (no header)
+2. Select the data range
+3. Click **OPEX** tab -> **IMR Chart**
+4. Fill in the settings dialog (all fields visible at once)
+5. Click **Create Charts**
+
+Both charts appear to the right of the data on a new sheet.
+
+---
+
+## Chart design
+
+| Series | Colour | Markers |
+|---|---|---|
+| Y / MR data | Navy blue | Circle |
+| Mean / MRBar | Green | None |
+| UCL / LCL / MRUCL | Red | None |
+
+End labels show rounded values only (e.g. `52.55`). Label count and precision are set in the dialog.
+
+---
+
+## IMR constants
+
+| Constant | Value | Use |
+|---|---|---|
+| D2 | 2.659 | I-chart limits: Mean ± D2 × RBar |
+| D4 | 3.267 | MRUCL = RBar × D4 |
+
+---
+
+## Running without the ribbon button
+
 ```
 python opex_imr.py
 ```
 
----
-
-## How to use
-
-1. Open Excel and enter your data in a single column (or row)
-2. Select the data range (no headers)
-3. Run `python opex_imr.py`
-4. Fill in the settings dialog – all fields are visible at once
-5. Click **Create Charts**
-
-Two charts appear to the right of the data on a new sheet:
-- **Individuals chart** – Y values with Mean (green), LCL and UCL (red)
-- **Moving Range chart** – MR values with MRBar (green) and MRUCL (red)
-
-Labels on the right of each control line show the rounded value only (e.g. `52.55`).
-
----
-
-## Optional: Add a ribbon button
-
-If you want a ribbon button instead of running from the terminal:
-
-### 1  Install the xlwings Excel add-in
-```
-xlwings addin install
-```
-
-### 2  Create a companion workbook
-- Open Excel, create a new workbook, save as `OPEX.xlsm`
-- Open the VBA editor (Alt+F11)
-- Add this one sub to Module1:
-
-```vb
-Sub IMR_Chart()
-    RunPython "import sys; sys.path.insert(0, r'C:\AddIns'); import opex_imr; opex_imr.create_imr_chart()"
-End Sub
-```
-*(Change `C:\AddIns` to wherever you saved `opex_imr.py`)*
-
-### 3  Add a Quick Access Toolbar button
-- File → Options → Quick Access Toolbar
-- Choose commands from: Macros
-- Select `IMR_Chart` → Add → OK
-
-Or assign it to a keyboard shortcut:
-- Developer tab → Macros → IMR_Chart → Options → set a shortcut key
-
----
-
-## Why Python instead of VBA?
-
-| | VBA (.xla) | Python (xlwings) |
-|---|---|---|
-| Debug errors | No debug button in add-in mode | Full stack traces in terminal |
-| Chart API | Deprecated methods in Excel 365 | Direct COM access, always current |
-| Dialog | Multi-step InputBox or worksheet hack | Native tkinter window, all fields at once |
-| Code editing | VBA editor | Any editor (VS Code, etc.) |
-| Version control | Binary .xla file | Plain text .py file |
-| Testing | Manual only | Unit testable |
-
----
-
-## IMR constants used
-
-| Constant | Value | Purpose |
-|---|---|---|
-| D2 | 2.659 | I-chart limit width: Mean ± D2 × RBar |
-| D4 | 3.267 | MRUCL = RBar × D4 |
+Select your data in Excel first, then run the script.
