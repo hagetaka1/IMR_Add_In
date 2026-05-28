@@ -251,7 +251,7 @@ def style_series(ser_api, color: tuple, weight: float,
 
 def add_end_label(ser_api, value: float, decimals: int, color: tuple):
     """Add a value-only label to the last point of a series."""
-    last_pt = ser_api.Points(ser_api.Points.Count)
+    last_pt = ser_api.Points(ser_api.Points().Count)
     last_pt.ApplyDataLabels(Type=2)              # xlDataLabelsShowValue = 2
     dl = last_pt.DataLabel
     dl.Text           = _fmt(value, decimals)
