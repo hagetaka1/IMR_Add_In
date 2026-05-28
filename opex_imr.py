@@ -367,6 +367,7 @@ def create_imr_chart():
     n        = len(values)
 
     # ── Build worksheet ───────────────────────────────────────────────────────
+    wb.app.screen_updating = False
     ws = build_worksheet(wb, values, stats)
 
     # Chart left edge = just right of column G (col 7) with a small gap
@@ -421,6 +422,7 @@ def create_imr_chart():
         )
     except Exception as e:
         import traceback
+        wb.app.screen_updating = True
         messagebox.showerror("OPEX IMR - MR Chart Error",
             "The Moving Range chart failed:\n\n" + traceback.format_exc())
 
