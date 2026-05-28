@@ -398,7 +398,7 @@ def create_imr_chart():
     )
 
     # ── Moving Range chart  (columns E:G = MR, MRBar, MRUCL, rows 2 onwards) ─
-    mr_src = ws.range(f"E2:G{n+1}")
+    mr_src = ws.range(f"E1:G{n+1}")   # include header row so Excel sees 3 named series
     build_chart(
         ws        = ws,
         src_range = mr_src,
