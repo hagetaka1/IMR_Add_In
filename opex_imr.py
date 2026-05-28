@@ -303,18 +303,24 @@ def build_chart(ws: xw.Sheet, src_range: xw.Range,
 
 def create_imr_chart():
     """
-    Entry point – works in both standalone and xlwings RunPython modes.
-    In RunPython mode xlwings passes the calling workbook automatically.
+    Entry point called from:
+      - OPEX ribbon button (via xlwings RunPython)
+      - Command line: python opex_imr.py
     """
     try:
+        # RunPython mode: xlwings injects the calling workbook
         wb = xw.Book.caller()
     except Exception:
-        # Standalone: connect to the active Excel workbook
+        # Standalone mode: attach to the active Excel instance
         try:
-            wb = xw.books.active
+            app = xw.apps.active
+            if app is None:
+                raise RuntimeError("No Excel instance found.")
+            wb = app.books.active
         except Exception:
             messagebox.showerror("OPEX IMR",
-                "No Excel workbook found. Please open Excel with your data first.")
+                "No Excel workbook found.\n\n"
+                "Please open Excel with your data selected, then run this script.")
             return
 
     # ── Get data selection ────────────────────────────────────────────────────
