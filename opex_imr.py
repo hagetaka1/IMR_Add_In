@@ -399,25 +399,30 @@ def create_imr_chart():
 
     # ── Moving Range chart  (columns E:G = MR, MRBar, MRUCL, rows 2 onwards) ─
     mr_src = ws.range(f"E1:G{n+1}")   # include header row so Excel sees 3 named series
-    build_chart(
-        ws        = ws,
-        src_range = mr_src,
-        title     = s["mr_title"],
-        left      = chart_left + CHART_W + CHART_GAP,
-        top       = chart_top,
-        series_styles = [
-            (BLUE_DARK, 2.0,  8,    BLUE_DARK),   # MR    – circle markers
-            (GREEN,     1.75, -4142, GREEN),       # MRBar – no markers
-            (RED,       1.75, -4142, RED),         # MRUCL – no markers
-        ],
-        end_labels = [
-            None,
-            (2, stats["rbar"],  decimals, GREEN),
-            (3, stats["mrucl"], decimals, RED),
-        ],
-        y_label = s["y_axis"],
-        x_label = s["x_axis"],
-    )
+    try:
+        build_chart(
+            ws        = ws,
+            src_range = mr_src,
+            title     = s["mr_title"],
+            left      = chart_left + CHART_W + CHART_GAP,
+            top       = chart_top,
+            series_styles = [
+                (BLUE_DARK, 2.0,  8,    BLUE_DARK),   # MR    – circle markers
+                (GREEN,     1.75, -4142, GREEN),       # MRBar – no markers
+                (RED,       1.75, -4142, RED),         # MRUCL – no markers
+            ],
+            end_labels = [
+                None,
+                (2, stats["rbar"],  decimals, GREEN),
+                (3, stats["mrucl"], decimals, RED),
+            ],
+            y_label = s["y_axis"],
+            x_label = s["x_axis"],
+        )
+    except Exception as e:
+        import traceback
+        messagebox.showerror("OPEX IMR - MR Chart Error",
+            "The Moving Range chart failed:\n\n" + traceback.format_exc())
 
     ws.activate()
     ws.range("A1").select()
@@ -426,4 +431,8 @@ def create_imr_chart():
 
 # ── Standalone launcher ───────────────────────────────────────────────────────
 if __name__ == "__main__":
-    create_imr_chart()
+    try:
+        create_imr_chart()
+    except Exception as e:
+        import traceback
+        messagebox.showerror("OPEX IMR Error", traceback.format_exc())
